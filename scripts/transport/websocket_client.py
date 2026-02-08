@@ -55,7 +55,8 @@ class WebsocketClient:
                     
             for name, stream in shared_state.get_streams().items():
                 # print(f"{stream.seq} \t {last_seq.get(name, 0)}")
-                if stream.seq > last_seq.get(name, 0):
+                if ((stream.seq > last_seq.get(name, 0)) or 
+                    (stream.seq == 0 and last_seq.get(name, 0) > 0)):
 
                     payload = {
                         "name": stream.name,

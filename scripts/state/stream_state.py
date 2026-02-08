@@ -1,7 +1,10 @@
 import time
 import asyncio
 
+MAX_SEQ = 0xFFFFFFFF
+
 class StreamState():
+
     def __init__(self, name: str, type: str):
         self.name = name
         self.type = type
@@ -14,7 +17,10 @@ class StreamState():
     def update(self, data):
         self.data = data
         self.timestamp = time.time()
-        self.seq += 1
+        if self.seq == MAX_SEQ:
+            self.seq = 0
+        else:
+            self.seq += 1
 
         # self._event.set()
 
