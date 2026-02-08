@@ -1,0 +1,65 @@
+# ===============================
+# Python bytecode / cache
+# ===============================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore __pycache__ anywhere
+**/__pycache__/
+
+# ===============================
+# Virtual environments
+# ===============================
+.venv/
+
+# ===============================
+# Python build artifacts
+# ===============================
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ===============================
+# Test / coverage artifacts
+# ===============================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ===============================
+# Logs
+# ===============================
+*.log
+
+# ===============================
+# OS / Editor junk
+# ===============================
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
+
+# ===============================
+# Environment / secrets
+# ===============================
+.env
+.env.*
+
+# ===============================
+# Ignore specific packages / folders
+# (example – customize)
+# ===============================
+# Ignore entire internal packages
+# packages/experimental/
+# packages/tmp/
+
+# # Ignore a single package
+# packages/old_module/
+
+# # Ignore generated files inside a package
+# packages/**/generated/
+
+scripts/test_codes
