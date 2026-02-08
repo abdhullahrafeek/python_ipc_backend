@@ -19,6 +19,10 @@ async def main():
             asyncio.create_task(AsyncSystem.start())
         )
 
+    except asyncio.CancelledError:
+        print(f"[main]: Asyncio gather cancelled", flush=True)
+        raise
+
 
     finally:
         await AsyncSystem.stop()
@@ -26,4 +30,8 @@ async def main():
         AsyncRuntime.close()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+
+    except KeyboardInterrupt:
+        print(f"[main]: Shutting down", flush=True)

@@ -40,21 +40,10 @@ class WebsocketClient:
         await self.ws.send(data)
 
     async def _sendloop(self, shared_state):
+        # try:
         last_seq = {}
-
-        # streams = list(shared_state.get_streams().values())
-        while self._connected:
-            # tasks, _ = await asyncio.wait(
-            #     [await stream.get_value() for stream in streams],
-            #     return_when=asyncio.FIRST_COMPLETED
-            # )
-
-            # for task in tasks:
-            #     payload = task.result()
-            #     await self._send(json.dumps(payload))
-                    
+        while self._connected:  
             for name, stream in shared_state.get_streams().items():
-                # print(f"{stream.seq} \t {last_seq.get(name, 0)}")
                 if ((stream.seq > last_seq.get(name, 0)) or 
                     (stream.seq == 0 and last_seq.get(name, 0) > 0)):
 
@@ -69,14 +58,18 @@ class WebsocketClient:
                     await self._send(json.dumps(payload))
 
                     last_seq[name] = stream.seq
-
-            # await asyncio.sleep(0)
-
-            # print(shared_state.get_streams()["Sensor_01"].data ,flush=True)
             await asyncio.sleep(0)
-            # await self._send(shared_state.latest_camera)
-            # await self._send(shared_state.latest_sensor)
-            # print(f"Sensor sent {shared_state.latest_sensor}")
+
+        # except asyncio.CancelledError:
+        #     print(f"[WebsocketClient]: Send loop cancelled", flush=True)
+        #     raise
+
+        # except Exception as e:
+        #     print(f"[WebsocketClient]: Send loop error {e}", flush=True)
+        #     raise
+
+        # finally:
+        #     await self.disconnect()
 
     async def start_transport(self, shared_state):
         await self._connect()

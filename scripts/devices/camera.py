@@ -44,3 +44,5 @@ class Camera(Device):
     def close(self):
         cv2.destroyAllWindows()
         self.camera.close()
+
+        print("[Camera]: Camera closed")

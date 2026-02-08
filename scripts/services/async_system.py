@@ -16,8 +16,15 @@ class AsyncSystem:
             cls.tasks.append(asyncio.create_task(cls._run_device(device)))
 
         # cls.tasks.append(asyncio.create_task(cls._start_transport(ws, shared_state)))
-
+        # try:
         await asyncio.gather(*cls.tasks)
+
+        # except asyncio.CancelledError:
+        #     print(f"[AsyncSystem]: Asyncio gather cancelled", flush=True)
+        #     raise
+
+        # finally:
+        #     await cls.stop()
 
     @classmethod
     async def stop(cls):
@@ -28,6 +35,8 @@ class AsyncSystem:
         
         await asyncio.gather(*cls.tasks, return_exceptions=True)
 
+        print(f"[AsyncSystem]: Async system closed", flush=True)
+
 
     @classmethod
     async def _run_device(cls, device):
@@ -37,6 +46,10 @@ class AsyncSystem:
 
                 if not output or cls.stop_event.is_set():
                     break
+
+        # except asyncio.CancelledError:
+        #     print(f"[AsyncSystem]: Run device cancelled", flush=True)
+        
         finally:
             if hasattr(device, "close"):
                 device.close()

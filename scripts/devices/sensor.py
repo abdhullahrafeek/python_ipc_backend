@@ -11,7 +11,7 @@ class Sensor(Device):
         return self.sensor.read()
     
     async def process_output(self, reading):
-        print(reading, flush=True)
+        print(f"[Sensor]: Sensor reading is {reading}", flush=True)
 
         self.stream.update(reading)
 
