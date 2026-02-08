@@ -14,15 +14,6 @@ class Sensor(Device):
         print(f"[Sensor]: Sensor reading is {reading}", flush=True)
 
         self.stream.update(reading)
-
-        # payload = {
-        #     "type": "sensor",
-        #     "timestamp": time.time(),
-        #     "data" : reading
-        # }
-
-        # shared_state.latest_sensor = json.dumps(payload)
-        # print(shared_state.latest_sensor, flush=True)
         return True
     
     def close(self):

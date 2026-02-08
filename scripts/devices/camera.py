@@ -28,16 +28,6 @@ class Camera(Device):
         jpg_base64 = base64.b64encode(buffer).decode("utf-8")
 
         self.stream.update(jpg_base64)
-
-        # payload = {
-        #     "type": "camera",
-        #     "timestamp": time.time(),
-        #     "data" : jpg_base64
-        # }
-
-        # # await ws.send(json.dumps(payload))
-        # shared_state.latest_camera = json.dumps(payload)
-        # print(shared_state.latest_camera, flush=True)
         await asyncio.sleep(0)
         return True
     

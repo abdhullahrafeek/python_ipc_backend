@@ -40,7 +40,6 @@ class WebsocketClient:
         await self.ws.send(data)
 
     async def _sendloop(self, shared_state):
-        # try:
         last_seq = {}
         while self._connected:  
             for name, stream in shared_state.get_streams().items():
@@ -59,17 +58,6 @@ class WebsocketClient:
 
                     last_seq[name] = stream.seq
             await asyncio.sleep(0)
-
-        # except asyncio.CancelledError:
-        #     print(f"[WebsocketClient]: Send loop cancelled", flush=True)
-        #     raise
-
-        # except Exception as e:
-        #     print(f"[WebsocketClient]: Send loop error {e}", flush=True)
-        #     raise
-
-        # finally:
-        #     await self.disconnect()
 
     async def start_transport(self, shared_state):
         await self._connect()

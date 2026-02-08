@@ -8,16 +8,9 @@ class AsyncRuntime:
 
     @classmethod
     async def run_in_executor(cls, func, *args, **kwargs):
-        # try:
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(cls.executor, lambda: func(*args, **kwargs))
-        
-        # except asyncio.CancelledError:
-        #     print(f"[AsyncRuntime]: Thread pool executor cancelled",flush=True)
-        #     raise
 
-        # finally:
-        #     cls.close()
 
     @classmethod
     def close(cls):

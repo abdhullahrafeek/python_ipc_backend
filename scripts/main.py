@@ -13,10 +13,13 @@ async def main():
     AsyncSystem.register_device(Sensor("Sensor_01", shared_state))
     AsyncSystem.register_device(Camera("Camera_01",shared_state, 0))
 
+    system_task = asyncio.create_task(AsyncSystem.start())
+    transport_task = asyncio.create_task(websocket_client.start_transport(shared_state))
+
     try:
         await asyncio.gather(
-            asyncio.create_task(websocket_client.start_transport(shared_state)),
-            asyncio.create_task(AsyncSystem.start())
+            system_task,
+            transport_task
         )
 
     except asyncio.CancelledError:
@@ -25,6 +28,8 @@ async def main():
 
 
     finally:
+        system_task.cancel()
+        transport_task.cancel()
         await AsyncSystem.stop()
         await websocket_client.disconnect()
         AsyncRuntime.close()
