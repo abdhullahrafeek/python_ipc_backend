@@ -1,5 +1,4 @@
 from drivers import CameraDriver
-from services import AsyncRuntime
 import cv2
 import base64
 import asyncio
@@ -7,14 +6,21 @@ from state import SharedState
 
 from .device import Device
 
+import threading
+
 
 class Camera(Device):
     def __init__(self, name: str, shared_state: SharedState, index=0):
         self.camera = CameraDriver(name, index)
         super().__init__(name, "camera", shared_state)
 
+        self._reading_completed = threading.Event()
+
     def _read(self):
-        return self.camera.read()
+        self._reading_completed.clear()
+        result = self.camera.read()
+        self._reading_completed.set()
+        return result
 
     async def process_output(self, frame):
         cv2.imshow("Feed", frame)
@@ -32,10 +38,12 @@ class Camera(Device):
         return True
     
     def close(self):
-        cv2.destroyAllWindows()
+        print(f"[Camera]: Waiting for reading to complete", flush=True)
+        self._reading_completed.wait()
+        print(f"[Camera]: Reading completed. Closing camera", flush=True)
         self.camera.close()
-
-        print("[Camera]: Camera closed")
+        print(f"[Camera]: Camera closed", flush=True)
+        cv2.destroyAllWindows()
 
     def _start(self):
         self.camera.start()
