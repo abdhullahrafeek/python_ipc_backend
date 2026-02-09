@@ -2,6 +2,9 @@ from websockets.asyncio.client import connect
 import asyncio
 import json
 
+TIME_OUT_SEC = 1
+MAX_RETRY_TIMES = 10
+
 class WebsocketClient:
     def __init__(self, uri):
         self.uri = uri
@@ -13,15 +16,28 @@ class WebsocketClient:
             print(f"[WebsocketClient]: Already connected to {self.uri}", flush=True)
             return
         
-        self.ws = await connect(self.uri)
-        self._connected = True
+        retry_attempt = 0
 
-        print(f"[WebsocketClient]: Successfully connected to {self.uri}", flush=True)
+        while retry_attempt < MAX_RETRY_TIMES:
+            try:
+                self.ws = await connect(self.uri)
+                self._connected = True
+
+                print(f"[WebsocketClient]: Successfully connected to {self.uri}", flush=True)
+                break
+
+            except ConnectionRefusedError:
+                print(f"[WebsocketClient]: Connection refused. Retrying {retry_attempt}.....")
+                retry_attempt += 1
+                continue
+        
+        print(f"[WebsocketClient]: Could not connect.")
 
 
     async def disconnect(self):
         if not self._connected:
             print(f"[WebsocketClient]: Not connected to {self.uri}", flush=True)
+            return
 
         await self.ws.close()
         self._connected = False
