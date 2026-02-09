@@ -16,15 +16,15 @@ class WebsocketClient:
             print(f"[WebsocketClient]: Already connected to {self.uri}", flush=True)
             return
         
-        retry_attempt = 0
+        retry_attempt = 1
 
-        while retry_attempt < MAX_RETRY_TIMES:
+        while retry_attempt <= MAX_RETRY_TIMES:
             try:
                 self.ws = await connect(self.uri)
                 self._connected = True
 
                 print(f"[WebsocketClient]: Successfully connected to {self.uri}", flush=True)
-                break
+                return
 
             except ConnectionRefusedError:
                 print(f"[WebsocketClient]: Connection refused. Retrying {retry_attempt}.....")
@@ -53,7 +53,14 @@ class WebsocketClient:
             print(f"[WebsocketClient]: Socket not connected", flush=True)
             return
         
-        await self.ws.send(data)
+        try:
+            await self.ws.send(data)
+
+        except Exception as e:
+            self._connected = False
+            print(e)
+            print("[WebsocketClient]: Connection failed. Trying to reconnect.")
+            await self._connect()
 
     async def _sendloop(self, shared_state):
         last_seq = {}
