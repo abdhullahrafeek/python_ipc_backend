@@ -11,18 +11,29 @@ import threading
 
 class Camera(Device):
     def __init__(self, name: str, shared_state: SharedState, index=0):
+        self._reading_completed = threading.Event()
+        self._stop_called = threading.Event()
+
         self.camera = CameraDriver(name, index)
         super().__init__(name, "camera", shared_state)
 
-        self._reading_completed = threading.Event()
 
     def _read(self):
+        if self._stop_called.is_set():
+            return None
+        
         self._reading_completed.clear()
-        result = self.camera.read()
-        self._reading_completed.set()
-        return result
+        
+        try:
+            return self.camera.read()
+        
+        finally:
+            self._reading_completed.set()
+        
 
     async def process_output(self, frame):
+        if frame is None:
+            return False
         cv2.imshow("Feed", frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -38,6 +49,7 @@ class Camera(Device):
         return True
     
     def close(self):
+        self._stop_called.set()
         print(f"[Camera]: Waiting for reading to complete", flush=True)
         self._reading_completed.wait()
         print(f"[Camera]: Reading completed. Closing camera", flush=True)
@@ -46,4 +58,5 @@ class Camera(Device):
         cv2.destroyAllWindows()
 
     def _start(self):
+        self._stop_called.clear()
         self.camera.start()
