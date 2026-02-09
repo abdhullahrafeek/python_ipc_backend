@@ -3,10 +3,13 @@ import cv2
 class CameraDriver:
     def __init__(self, name, index):
         self.name = name
-        self.cap = cv2.VideoCapture(index)
+        self.index = index
+
+    def start(self):
+        self.cap = cv2.VideoCapture(self.index)
 
         if not self.cap.isOpened():
-            raise ConnectionError(f"Camera at index {index} is not available")
+            raise ConnectionError(f"Camera at index {self.index} is not available")
     
     def read(self):
         ret, frame = self.cap.read()

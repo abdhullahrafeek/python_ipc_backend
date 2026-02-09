@@ -10,8 +10,8 @@ from .device import Device
 
 class Camera(Device):
     def __init__(self, name: str, shared_state: SharedState, index=0):
-        super().__init__(name, "camera", shared_state)
         self.camera = CameraDriver(name, index)
+        super().__init__(name, "camera", shared_state)
 
     def _read(self):
         return self.camera.read()
@@ -36,3 +36,6 @@ class Camera(Device):
         self.camera.close()
 
         print("[Camera]: Camera closed")
+
+    def _start(self):
+        self.camera.start()

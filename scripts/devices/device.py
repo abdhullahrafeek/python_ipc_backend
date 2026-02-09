@@ -7,6 +7,7 @@ class Device(ABC):
     def __init__(self, name, type, shared_state: SharedState):
         self.name = name
         self.stream = shared_state.register_stream(name, type)
+        self._start()
 
     def __aiter__(self):
         return self
@@ -45,4 +46,8 @@ class Device(ABC):
         
         :param self: Description
         '''
+        pass
+
+    @abstractmethod
+    def _start(self):
         pass

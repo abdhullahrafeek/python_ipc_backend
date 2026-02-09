@@ -4,8 +4,8 @@ from .device import Device
 
 class Sensor(Device):
     def __init__(self, name: str, shared_state):
-        super().__init__(name, "sensor", shared_state)
         self.sensor = SensorDriver(name)
+        super().__init__(name, "sensor", shared_state)
 
     def _read(self):
         return self.sensor.read()
@@ -18,3 +18,6 @@ class Sensor(Device):
     
     def close(self):
         return super().close()
+    
+    def _start(self):
+        self.sensor.start()
