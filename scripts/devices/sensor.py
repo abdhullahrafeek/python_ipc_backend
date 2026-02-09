@@ -1,5 +1,4 @@
 from drivers import SensorDriver
-from services import AsyncRuntime
 from .device import Device
 
 class Sensor(Device):
