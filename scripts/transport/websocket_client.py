@@ -39,10 +39,16 @@ class WebsocketClient:
             print(f"[WebsocketClient]: Not connected to {self.uri}", flush=True)
             return
 
-        await self.ws.close()
-        self._connected = False
+        try:
+            await self.ws.close()
+        
+        except Exception as e:
+            print(f"Exception Details: {type(e).__name__} - {e}", flush=True)
+            raise
 
-        print(f"[WebsocketClient]: Successfully disconnected from {self.uri}", flush=True)
+        finally:
+            self._connected = False
+            print(f"[WebsocketClient]: Successfully disconnected from {self.uri}", flush=True)
 
     def isConnected(self):
         return self._connected
@@ -57,9 +63,10 @@ class WebsocketClient:
             await self.ws.send(data)
 
         except Exception as e:
-            self._connected = False
+            # self._connected = False
             print(e)
             print("[WebsocketClient]: Connection failed. Trying to reconnect.")
+            await self.disconnect()
             await self._connect()
 
     async def _sendloop(self, shared_state):
